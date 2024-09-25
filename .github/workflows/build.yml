@@ -14,7 +14,9 @@ jobs:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - uses: gradle/wrapper-validation-action@v2
+      - uses: gradle/actions/setup-gradle@v3
+        with:
+          validate-wrappers: true
       - run: ./gradlew check build publishToMavenLocal --stacktrace
       - uses: Juuxel/publish-checkstyle-report@v1
         if: ${{ failure() }}
