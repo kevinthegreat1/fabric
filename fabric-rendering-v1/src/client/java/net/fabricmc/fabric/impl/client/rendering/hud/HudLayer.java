@@ -16,11 +16,11 @@
 
 package net.fabricmc.fabric.impl.client.rendering.hud;
 
+import java.util.function.Function;
+
 import net.minecraft.util.Identifier;
 
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
-
-import java.util.function.UnaryOperator;
 
 public interface HudLayer {
 	Identifier id();
@@ -28,14 +28,14 @@ public interface HudLayer {
 	HudElement element(HudElement vanillaElement);
 
 	static HudLayer ofVanilla(Identifier id) {
-		return of(id, UnaryOperator.identity());
+		return of(id, Function.identity());
 	}
 
 	static HudLayer ofElement(Identifier id, HudElement element) {
 		return of(id, $ -> element);
 	}
 
-	static HudLayer of(Identifier id, UnaryOperator<HudElement> operator) {
+	static HudLayer of(Identifier id, Function<HudElement, HudElement> operator) {
 		return new HudLayer() {
 			@Override
 			public Identifier id() {

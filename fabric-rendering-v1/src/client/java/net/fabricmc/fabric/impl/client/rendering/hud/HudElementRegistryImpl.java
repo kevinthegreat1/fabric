@@ -119,7 +119,7 @@ public class HudElementRegistryImpl {
 
 	public static void replaceElement(Identifier identifier, Function<HudElement, HudElement> replacer) {
 		boolean didChange = findLayer(identifier, (l, iterator) -> {
-			iterator.set(HudLayer.of(identifier, element -> replacer.apply(l.element(element))));
+			iterator.set(HudLayer.of(identifier, replacer.compose(l::element)));
 			return true;
 		});
 
