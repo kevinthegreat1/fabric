@@ -20,12 +20,22 @@ import net.minecraft.util.Identifier;
 
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
 
+import java.util.function.UnaryOperator;
+
 public interface HudLayer {
 	Identifier id();
 
-	HudElement element();
+	HudElement element(HudElement vanillaElement);
 
-	static HudLayer of(Identifier id, HudElement element) {
+	static HudLayer ofVanilla(Identifier id) {
+		return of(id, UnaryOperator.identity());
+	}
+
+	static HudLayer ofElement(Identifier id, HudElement element) {
+		return of(id, $ -> element);
+	}
+
+	static HudLayer of(Identifier id, UnaryOperator<HudElement> operator) {
 		return new HudLayer() {
 			@Override
 			public Identifier id() {
@@ -33,8 +43,8 @@ public interface HudLayer {
 			}
 
 			@Override
-			public HudElement element() {
-				return element;
+			public HudElement element(HudElement vanillaElement) {
+				return operator.apply(vanillaElement);
 			}
 		};
 	}

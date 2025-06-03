@@ -16,6 +16,8 @@
 
 package net.fabricmc.fabric.test.rendering.client;
 
+import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElement;
+
 import net.minecraft.block.Blocks;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -33,6 +35,10 @@ import net.fabricmc.fabric.api.client.gametest.v1.context.TestSingleplayerContex
 import net.fabricmc.fabric.api.client.gametest.v1.screenshot.TestScreenshotComparisonOptions;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.HudElementRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.hud.VanillaHudElements;
+
+import org.jetbrains.annotations.NotNull;
+
+import java.util.function.Function;
 
 public class HudTests implements ClientModInitializer, FabricClientGameTest {
 	private static final String MOD_ID = "fabric";
@@ -52,6 +58,7 @@ public class HudTests implements ClientModInitializer, FabricClientGameTest {
 		HudElementRegistry.attachElementBefore(VanillaHudElements.DEMO_TIMER, Identifier.of(MOD_ID, BEFORE_DEMO_TIMER), HudTests::renderBeforeDemoTimer);
 		HudElementRegistry.attachElementBefore(VanillaHudElements.CHAT, Identifier.of(MOD_ID, BEFORE_CHAT), HudTests::renderBeforeChat);
 		HudElementRegistry.attachElementAfter(VanillaHudElements.SUBTITLES, Identifier.of(MOD_ID, AFTER_SUBTITLES), HudTests::renderAfterSubtitles);
+		HudElementRegistry.replaceElement(VanillaHudElements.EXPERIENCE_LEVEL, HudTests::replaceExperienceLevel);
 	}
 
 	private static void renderBeforeMiscOverlay(DrawContext context, RenderTickCounter tickCounter) {
@@ -96,6 +103,19 @@ public class HudTests implements ClientModInitializer, FabricClientGameTest {
 		// Render a yellow rectangle at the top of the screen, and it should block the player list
 		context.fill(context.getScaledWindowWidth() / 2 - 150, 0, context.getScaledWindowWidth() / 2 + 150, 15, Colors.YELLOW);
 		context.drawCenteredTextWithShadow(MinecraftClient.getInstance().textRenderer, "6. This yellow rectangle should block the player list.", context.getScaledWindowWidth() / 2, 0, Colors.WHITE);
+	}
+
+	private static HudElement replaceExperienceLevel(HudElement hudElement) {
+		return (context, tickCounter) -> {
+			if (!shouldRender) {
+				hudElement.render(context, tickCounter);
+			} else {
+				context.getMatrices().pushMatrix();
+				context.getMatrices().translate(0.0F, -3.0F);
+				hudElement.render(context, tickCounter);
+				context.getMatrices().popMatrix();
+			}
+		};
 	}
 
 	@Override

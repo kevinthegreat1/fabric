@@ -108,7 +108,7 @@ public class HudElementRegistryTest {
 		HudElementRegistry.addLast(testIdentifier("layer3"), testElement("layer3"));
 
 		Assertions.assertTrue(HudElementRegistryImpl.findLayer(testIdentifier("layer2"), (layer, iterator) -> {
-			iterator.add(HudLayer.of(testIdentifier("found"), testElement("found")));
+			iterator.add(HudLayer.ofElement(testIdentifier("found"), testElement("found")));
 			return true;
 		}));
 
@@ -129,7 +129,7 @@ public class HudElementRegistryTest {
 
 			String path = layer.id().getPath();
 			String name = "visited" + path.substring(path.length() - 1);
-			iterator.add(HudLayer.of(testIdentifier(name), testElement(name)));
+			iterator.add(HudLayer.ofElement(testIdentifier(name), testElement(name)));
 			return true;
 		}));
 
